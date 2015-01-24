@@ -17,6 +17,20 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = [
     "README.md"
   ]
+  s.files = [
+    "Gemfile",
+    "Gemfile.lock",
+    "README.md",
+    "Rakefile",
+    "VERSION",
+    "bin/weather",
+    "lib/weathercli.rb",
+    "lib/weathercli/weather.rb",
+    "license.md",
+    "spec/spec_helper.rb",
+    "spec/weather_spec.rb",
+    "weathercli.gemspec"
+  ]
   s.homepage = "http://gitlab.com/kmcq/weathercli"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.3.0"
@@ -26,18 +40,18 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rspec>, [">= 0"])
-      s.add_runtime_dependency(%q<json>, [">= 0"])
-      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_runtime_dependency(%q<rspec>, ["= 3.1.0"])
+      s.add_runtime_dependency(%q<json>, ["= 1.8.2"])
+      s.add_development_dependency(%q<jeweler>, ["= 2.0.1"])
     else
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<json>, [">= 0"])
-      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["= 3.1.0"])
+      s.add_dependency(%q<json>, ["= 1.8.2"])
+      s.add_dependency(%q<jeweler>, ["= 2.0.1"])
     end
   else
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<json>, [">= 0"])
-    s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["= 3.1.0"])
+    s.add_dependency(%q<json>, ["= 1.8.2"])
+    s.add_dependency(%q<jeweler>, ["= 2.0.1"])
   end
 end
 

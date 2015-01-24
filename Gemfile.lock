@@ -64,6 +64,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  jeweler
-  json
-  rspec
+  jeweler (= 2.0.1)
+  json (= 1.8.2)
+  rspec (= 3.1.0)

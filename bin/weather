@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require 'weathercli'
 
-puts RubyWeather::Weather.new('San Francisco')
+puts WeatherCli::Weather.new('San Francisco')
