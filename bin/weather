@@ -1,4 +1,13 @@
 #!/usr/bin/env ruby
 require 'weathercli'
 
-puts WeatherCli::Weather.new('San Francisco')
+config_file = File.join(Dir.home, ".weathercli")
+if File.file?(config_file)
+  default_location = File.read(config_file)
+else
+  print "Add default location [e.g. San Francisco, CA]:  "
+  default_location = gets
+  File.open(config_file, 'w').write(default_location)
+end
+
+puts WeatherCli::Weather.new(default_location)
