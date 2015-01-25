@@ -19,7 +19,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://gitlab.com/kmcq/weathercli"
   gem.license = "MIT"
   gem.summary = "Weather updates on the command line."
-  gem.description = "weathercli asks Yahoo for the current weather a few forecasts. You can have a default location or specify one when calling it."
+  gem.description = "weathercli asks Yahoo for the current weather and a few forecasts. You can have a default location or specify one when calling it."
   gem.authors = ["kmcq"]
   # dependencies defined in Gemfile
 end
