@@ -1,28 +1,4 @@
 #!/usr/bin/env ruby
 require 'weathercli'
 
-CONFIG_FILE = File.join(Dir.home, ".weathercli")
-
-def save_default_location(location)
-  File.open(CONFIG_FILE, 'w').write(location)
-end
-
-def location
-  location_args = ARGV.join unless ARGV.empty?
-  if location_args
-    print "Save as default location? [y/n]: "
-    if STDIN.gets.chomp.downcase == 'y'
-      save_default_location(location_args)
-    end
-    location_args
-  elsif File.file?(CONFIG_FILE)
-    File.read(CONFIG_FILE)
-  else
-    print "Add default location [e.g. San Francisco, CA]:  "
-    location = gets
-    save_default_location(location)
-    location
-  end
-end
-
-puts WeatherCli::Weather.new(location)
+puts WeatherCli::Weather.new(WeatherCli::Cli.location)
