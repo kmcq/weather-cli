@@ -30,41 +30,81 @@ describe WeatherCli::Weather do
     }
   }
 
-  before do
-    allow_any_instance_of(WeatherCli::Weather).to receive(:retrieve_api_results).and_return(api_results)
-  end
-
   context '#initialize' do
-
-    it 'should construct the correct query' do
-      expect(weather.send(:construct_query, location)).to eq(correct_query)
-    end
-
-    it 'should construct the correct URL' do
-      encoded_location = URI.encode(location)
-      correct_url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22#{encoded_location}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
-      expect(weather.send(:construct_url, correct_query)).to eq(correct_url)
-    end
-
-    it 'should have a title' do
-      expect(weather.title).to eq(title)
-    end
-
-    it 'should have the current condition' do
-      expect(weather.conditions).to eq(conditions)
-    end
-
-    it 'should have the forecast for today and tomorrow' do
-      expect(weather.forecasts.length).to eq(2)
-      expect(weather.forecasts).to eq(forecasts)
-    end
-
     it 'should map any options to a truthy hash' do
       expect(weather.options).to eq({'option1' => true, 'option2' => true})
     end
   end
 
+  it 'should construct the correct query' do
+    expect(weather.send(:construct_query, location)).to eq(correct_query)
+  end
+
+  it 'should construct the correct URL' do
+    encoded_location = URI.encode(location)
+    correct_url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22#{encoded_location}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+    expect(weather.send(:construct_url, correct_query)).to eq(correct_url)
+  end
+
+  context '#get_weather' do
+    context 'with a successful api call' do
+      before do
+        allow_any_instance_of(WeatherCli::Weather).to receive(:retrieve_api_results).and_return(api_results)
+        weather.get_weather
+      end
+
+      it 'should have a title' do
+        expect(weather.title).to eq(title)
+      end
+
+      it 'should have the current condition' do
+        expect(weather.conditions).to eq(conditions)
+      end
+
+      it 'should have the forecast for today and tomorrow' do
+        expect(weather.forecasts.length).to eq(2)
+        expect(weather.forecasts).to eq(forecasts)
+      end
+    end
+
+    context 'with an unsuccessful api call' do
+      before do
+        allow_any_instance_of(WeatherCli::Weather).to receive(:retrieve_api_results).and_return(false)
+        weather.get_weather
+      end
+
+      it 'should not set the weather attributes' do
+        [:title, :conditions, :forecasts].each do |attr|
+          expect(weather.send(attr)).to eq(nil)
+        end
+      end
+    end
+  end
+
+  describe '#retrieve_api_results' do
+    context 'with a failure' do
+      let(:url) { 'fake_url.fake' }
+
+      before do
+        allow(JSON).to receive(:parse).and_raise(StandardError)
+      end
+
+      it 'should apologize' do
+        expect { weather.send(:retrieve_api_results, url) }.to output("Sorry, something went wrong.\n").to_stderr
+      end
+
+      it 'should return false' do
+        allow($stderr).to receive(:write)
+        expect(weather.send(:retrieve_api_results, url)).to eq(false)
+      end
+    end
+  end
+
   context '#to_s' do
+    before do
+      allow_any_instance_of(WeatherCli::Weather).to receive(:retrieve_api_results).and_return(api_results)
+      weather.get_weather
+    end
 
     it 'should print out the weather nicely' do
       output_string = [
@@ -75,7 +115,5 @@ describe WeatherCli::Weather do
       ].join("\n")
       expect(weather.to_s).to eq(output_string)
     end
-
   end
-
 end

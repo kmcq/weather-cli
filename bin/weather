@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
 require 'weathercli'
 
-puts WeatherCli::Weather.new(WeatherCli::Cli.location)
+weather = WeatherCli::Weather.new(WeatherCli::Cli.location)
+weather.get_weather
+puts weather

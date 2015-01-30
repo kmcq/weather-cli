@@ -6,11 +6,12 @@ module WeatherCli
     attr_reader :location, :conditions, :options, :title, :forecasts
 
     def initialize(location, *options)
+      @location = location
       @options = Hash[options.map { |o| [o, true] }]
-      get_weather(location)
     end
 
     def to_s
+      return '' unless title && conditions && forecasts
       todays_forecast = forecasts.first
       tomorrows_forecast = forecasts.last
       [
@@ -21,13 +22,16 @@ module WeatherCli
       ].join("\n")
     end
 
-    private
-
-    def get_weather(location)
-      query = construct_query(location)
+    def get_weather
+      query = construct_query(@location)
       url = construct_url(query)
-      parse_api_results(retrieve_api_results(url))
+      results = retrieve_api_results(url)
+      if results
+        parse_api_results(results)
+      end
     end
+
+    private
 
     def construct_query(location)
       "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"#{location}\")"
@@ -41,7 +45,15 @@ module WeatherCli
     end
 
     def retrieve_api_results(url)
-      JSON.parse(Net::HTTP::get(URI.parse(url)))['query']['results']['channel']['item']
+      begin
+        results_hash = JSON.parse(Net::HTTP::get(URI.parse(url)))
+        raise unless results_hash['query'] && results_hash['query']['results']
+      rescue => _
+        $stderr.puts 'Sorry, something went wrong.'
+        return false
+      else
+        results_hash['query']['results']['channel']['item']
+      end
     end
 
     def parse_api_results(results)
